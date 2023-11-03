@@ -1,9 +1,11 @@
-package com.ShopAll.Methaporce.Models;
+package com.ShopAll.Methaporce.Entity;
 
 
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,11 +16,13 @@ public class Direccion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="Id")
+    @JsonIgnore
     private int id;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     @JsonBackReference
+    @Schema(hidden = true)
     private Usuario usuario;
 
     @Column(name="Calle")
@@ -35,7 +39,5 @@ public class Direccion {
 
     @Column(name="Ciudad")
     private String ciudad;
-
-
 
 }

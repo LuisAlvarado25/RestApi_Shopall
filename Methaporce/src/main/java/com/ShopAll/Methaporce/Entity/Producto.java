@@ -1,7 +1,11 @@
-package com.ShopAll.Methaporce.Models;
+package com.ShopAll.Methaporce.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -9,20 +13,28 @@ import lombok.Data;
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @Column(name="Id")
-    private int id;
+    private Long id;
+
     @Column(name="Nombre")
     private String nombre;
+
     @Column(name="Descripcion")
     private String descripcion;
+
     @Column(name="Precio")
     private double precio;
+
     @Column(name="Categoria")
     private String Categoria;
-    @Column(name="Usuario_Id")
-    private int usuario_id;
+
     @Column(name="Cantidad")
     private int cantidad;
+
+    @OneToMany(mappedBy = "producto",cascade =CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Comentario> comentarios;
 
 
 

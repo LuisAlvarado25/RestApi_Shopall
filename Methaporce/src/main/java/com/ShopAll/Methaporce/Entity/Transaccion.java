@@ -1,4 +1,4 @@
-package com.ShopAll.Methaporce.Models;
+package com.ShopAll.Methaporce.Entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

@@ -1,6 +1,9 @@
-package com.ShopAll.Methaporce.Models;
+package com.ShopAll.Methaporce.Entity;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,6 +14,7 @@ public class Comentario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="Id")
+    @JsonIgnore
     private int id;
 
     @Column(name="Usuario_Id")
@@ -31,6 +35,10 @@ public class Comentario {
     @Column(name="Fecha_Hora")
     private String fecha_hora;
 
-
+    @ManyToOne
+    @JoinColumn(name = "comentario_id")
+    @JsonBackReference
+    @Schema(hidden = true)
+    private Producto producto;
 
 }
