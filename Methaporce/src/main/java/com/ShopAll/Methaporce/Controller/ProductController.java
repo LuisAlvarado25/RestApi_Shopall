@@ -22,10 +22,12 @@ public class ProductController {
         this.productService=productService;
     }
     @Operation(summary = "Obten todos los productos")
+
     @GetMapping
     public List<Producto> getProduct(){
         return this.productService.getProduct();
     }
+    
     @Operation(summary = "Crea un nuevo Producto")
     @PostMapping
     public ResponseEntity<Object> RegistrarProducto(@RequestBody Producto producto){
