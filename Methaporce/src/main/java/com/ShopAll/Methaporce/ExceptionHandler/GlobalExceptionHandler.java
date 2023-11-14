@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
 @ExceptionHandler(UserException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserException(UserException ex){
-    return new ErrorResponse("Usuario ya registrado",ex.getMessage());
+    return new ErrorResponse("El servidor dice:",ex.getMessage());
 }
 
 @ExceptionHandler(MethodArgumentNotValidException.class)

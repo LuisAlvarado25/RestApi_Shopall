@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,28 +25,37 @@ public UserController(UserService userService){
     this.userService=userService;
 }
 
-@Operation(summary = "Obtiene Todos los Usuarios")
+//Método Obtener Usuario por ID.
+@Operation(summary = "Obtiene un usuario por id")
 @GetMapping("/{id}")
     public Usuario getUser(@PathVariable Long id){
-
     if(id <= 0){
-        throw new UserException("La tarea con el ID: " + id + " no se encontró");
+        throw new UserException("El Usuario con el ID: " + id + " no se encontró");
     }
-    return userService.getUsers(id);
+        return userService.getUsers(id);
+
 }
 
+//Método para crear un Usuario.
 @Operation(summary = "Crea un nuevo Usuario")
 @PostMapping
-    public Usuario RegistrarUsuario(@Valid @RequestBody Usuario usuario){
-    return  this.userService.newUsuario(usuario);
+    public ResponseEntity<String> RegistrarUsuario(@Valid @RequestBody Usuario usuario){
+    try {
+        userService.newUsuario(usuario);
+        return new ResponseEntity<>("Usuario registrado con éxito", HttpStatus.OK);
+    } catch (UserException e) {
+        return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
 }
+
+//Método para borrar Usuario por ID
 @Operation(summary = "Elimina un Usuario")
 @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarUsuario(@PathVariable Long id) {
         return this.userService.deleteUsuario(id);
     }
 
-
+    //Método para actualizar un Usuario
     @Operation(summary = "Actualiza un Usuario")
     @PutMapping("/{id}")
     public ResponseEntity<String> actualizarUsuario(@PathVariable Long id, @RequestBody Usuario usuarioActualizado) {

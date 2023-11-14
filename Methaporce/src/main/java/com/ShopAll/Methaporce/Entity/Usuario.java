@@ -28,28 +28,22 @@ public class Usuario {
     private String nombre;
 
     @Column
-
     private String apellido;
 
     @Column
-
     @Min(value = 18,message = "Tienes que ser mayor de edad para poder registrarte")
     private int edad ;
 
     @Column
-
     private Long telefono;
 
     @Column(unique = true)
-
     private String correo;
 
     @Column
-
     private String pass;
 
     @Column
-
     private String tipo;
 
     @OneToMany(mappedBy = "usuario",cascade =CascadeType.ALL,fetch = FetchType.LAZY)
