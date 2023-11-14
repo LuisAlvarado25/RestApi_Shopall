@@ -2,7 +2,9 @@ package com.ShopAll.Methaporce.Service;
 
 import com.ShopAll.Methaporce.Entity.Direccion;
 import com.ShopAll.Methaporce.Entity.Usuario;
+import com.ShopAll.Methaporce.Exception.UserException;
 import com.ShopAll.Methaporce.Repository.UserRepository;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,30 +28,17 @@ public class UserService {
         return this.userRepository.findAll();
     }
 
-    public ResponseEntity<Object> newUsuario(Usuario usuario) {
+    public Usuario newUsuario(Usuario usuario) {
             Optional<Usuario> existingUser = userRepository.findUsuarioByCorreo(usuario.getCorreo());
-
             if (existingUser.isPresent()) {
-
-                return new ResponseEntity<>(
-                        Map.of("message", "El correo ya está registrado"),
-                        HttpStatus.CONFLICT
-                );
+                throw new UserException("El correo ya esta registrado");
             }
-
-
             for (Direccion direccion : usuario.getDirecciones()) {
                 direccion.setUsuario(usuario);
             }
-
-
             userRepository.save(usuario);
-
-
-            return new ResponseEntity<>(
-                    Map.of("message", "Usuario registrado con éxito"),
-                    HttpStatus.OK
-            );}
+            return usuario;
+    }
 
     public ResponseEntity<String> deleteUsuario(Long id) {
         if (userRepository.existsById(id)) {

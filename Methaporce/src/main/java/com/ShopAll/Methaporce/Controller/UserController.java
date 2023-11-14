@@ -4,6 +4,7 @@ import com.ShopAll.Methaporce.Entity.Usuario;
 import com.ShopAll.Methaporce.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public UserController(UserService userService){
 
 @Operation(summary = "Crea un nuevo Usuario")
 @PostMapping
-    public ResponseEntity<Object> RegistrarUsuario(@RequestBody Usuario usuario){
+    public Usuario RegistrarUsuario(@Valid @RequestBody Usuario usuario){
     return  this.userService.newUsuario(usuario);
 }
 @Operation(summary = "Elimina un Usuario")
