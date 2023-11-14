@@ -24,10 +24,9 @@ public class UserService {
         this.userRepository=userRepository;
     }
 
-    public List<Usuario> getNames(){
-        return this.userRepository.findAll();
+    public Usuario getUsers(Long id) {
+        return userRepository.findById(id).orElse(null);
     }
-
     public Usuario newUsuario(Usuario usuario) {
             Optional<Usuario> existingUser = userRepository.findUsuarioByCorreo(usuario.getCorreo());
             if (existingUser.isPresent()) {

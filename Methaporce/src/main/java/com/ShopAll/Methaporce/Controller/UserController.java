@@ -1,6 +1,7 @@
 package com.ShopAll.Methaporce.Controller;
 
 import com.ShopAll.Methaporce.Entity.Usuario;
+import com.ShopAll.Methaporce.Exception.UserException;
 import com.ShopAll.Methaporce.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,9 +25,13 @@ public UserController(UserService userService){
 }
 
 @Operation(summary = "Obtiene Todos los Usuarios")
-@GetMapping
-    public List<Usuario> getUser(){
-    return this.userService.getNames();
+@GetMapping("/{id}")
+    public Usuario getUser(@PathVariable Long id){
+
+    if(id <= 0){
+        throw new UserException("La tarea con el ID: " + id + " no se encontró");
+    }
+    return userService.getUsers(id);
 }
 
 @Operation(summary = "Crea un nuevo Usuario")
