@@ -30,6 +30,16 @@ serialización/deserialización de los objetos JSON.
 1. Utiliza una herramienta como Postman o curl para enviar solicitudes HTTP a la API y
 verificar que las operaciones CRUD funcionen correctamente.
 
+
+## Pruebas:
+• Escribe pruebas unitarias utilizando JUnit y Mockito para verificar el comportamiento
+correcto de la API en diferentes escenarios, como el registro exitoso de un producto, las
+respuestas de error ante datos inválidos y la detección de emails duplicados.
+• Asegúrate de incluir casos de prueba que cubran las validaciones de datos y el manejo de
+excepciones.
+• Enfócate en el manejo de excepciones, en futuras actividades implementarás pruebas para
+el resto del sistema.
+
 ## NOTAS:
 
 - La base de datos en mysql se llama shopall.
