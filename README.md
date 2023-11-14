@@ -32,12 +32,12 @@ verificar que las operaciones CRUD funcionen correctamente.
 
 
 ## Pruebas:
-• Escribe pruebas unitarias utilizando JUnit y Mockito para verificar el comportamiento
+- Escribe pruebas unitarias utilizando JUnit y Mockito para verificar el comportamiento
 correcto de la API en diferentes escenarios, como el registro exitoso de un producto, las
 respuestas de error ante datos inválidos y la detección de emails duplicados.
-• Asegúrate de incluir casos de prueba que cubran las validaciones de datos y el manejo de
+- Asegúrate de incluir casos de prueba que cubran las validaciones de datos y el manejo de
 excepciones.
-• Enfócate en el manejo de excepciones, en futuras actividades implementarás pruebas para
+- Enfócate en el manejo de excepciones, en futuras actividades implementarás pruebas para
 el resto del sistema.
 
 ## NOTAS:
