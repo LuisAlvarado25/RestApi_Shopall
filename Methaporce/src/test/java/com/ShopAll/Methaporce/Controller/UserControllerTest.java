@@ -36,28 +36,30 @@ public class UserControllerTest {
 
     @Test
     public void getUserSuccess() throws Exception {
-        Long userId = 5L;
-        Usuario usuario = new Usuario();
-        usuario.setId(userId);
-        given(userService.getUsers(userId)).willReturn(usuario);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/shopall/Usuario/{id}", userId)).
-                andExpect(MockMvcResultMatchers.status().isOk());
+        String correo = "juanluis";
+        Usuario usuario= new Usuario();
+        usuario.setCorreo("juanluis");
+        given(userService.getUserByCorreo(correo)).willReturn(usuario);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/shopall/Usuario/{correo}", correo))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
-
     @Test
-    public void getUserFailed() throws Exception {
-        Long userId1 = 0L;
-        given(userService.getUsers(userId1)).willReturn(null);
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/shopall/Usuario/{id}", userId1)).
-                andExpect(MockMvcResultMatchers.status().isNotFound());
+    public void getUserNotFound() throws Exception {
+        String correoNoExistente = "correoquenoexiste";
+        // Configurar el comportamiento del servicio para devolver Optional.empty()
+      //  given(userService.getUserByCorreo(correoNoExistente)).willReturn(null);
+        // Realizar la solicitud GET y verificar que obtienes un 404
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/shopall/Usuario/{correo}", correoNoExistente))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
     public void createUserSuccess() throws Exception {
+
         mockMvc.perform(MockMvcRequestBuilders.post("/api/shopall/Usuario")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"nombre\": \"Luis\", \"edad\": 18, \"correo\": \"juanluis@example.com\"}"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isAccepted());
     }
 
     @Test
@@ -73,7 +75,7 @@ public class UserControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/shopall/Usuario")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"nombre\": \"Luis\", \"edad\": 18, \"correo\": \"juanluis@example.com\"}"))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isAccepted());
     }
 
     @Test
