@@ -18,8 +18,12 @@ public class Rol {
     private Long id;
 
     private String name;
+    public Rol() {
+        // default constructor
+    }
 
-    @ManyToMany(mappedBy = "roles")
-    @JsonIgnore
-    private List<Usuario> usuarios;
+    public Rol(String name){
+        this.name = name;
+    }
+
 }

@@ -4,7 +4,6 @@ import com.ShopAll.Methaporce.Exception.UserException;
 
 import com.ShopAll.Methaporce.Exception.ValidationErrorResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import jakarta.xml.bind.helpers.ValidationEventLocatorImpl;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
@@ -13,8 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Collection;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.stream.Collectors;
 

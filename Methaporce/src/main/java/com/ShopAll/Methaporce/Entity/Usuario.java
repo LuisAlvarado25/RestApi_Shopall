@@ -1,5 +1,9 @@
 package com.ShopAll.Methaporce.Entity;
-
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
 
@@ -11,13 +15,12 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Data
 @Table(name = "Usuarios")
-public class Usuario {
+public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -25,6 +28,7 @@ public class Usuario {
     private Long id;
     @Column
     @NotBlank(message = "Este campo es obligatorio y no puede contener espacios vacios")
+    @Size(min = 3, max = 50, message = "El nombre de usuario debe tener entre 3 y 10 caracteres")
     private String nombre;
     @Column
     private String apellido;
@@ -33,8 +37,11 @@ public class Usuario {
     private int edad ;
     @Column
     private Long telefono;
+
     @Column(unique = true)
+    @Email(message = "El formato del correo no es válido")
     private String correo;
+
     @Column
     private String password;
 
@@ -42,10 +49,50 @@ public class Usuario {
     @JsonManagedReference
     private List<Direccion> direcciones;
 
-    @ManyToMany(fetch = FetchType.EAGER,cascade =CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Rol> roles = new HashSet<>();
+    public Usuario(String username, String password) {
+        this.nombre = username;
+        this.password = password;
+    }
+    public Usuario(){}
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Implementa la lógica para devolver las autoridades (roles) del usuario
+        // Puedes utilizar la clase SimpleGrantedAuthority para representar roles
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+    }
 
-    @JoinTable(name = "user_roles",joinColumns = @JoinColumn(name="usuario_id",referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id",referencedColumnName = "id"))
-    private List<Rol> roles;
+    @Override
+    public String getPassword() {
+        // Devuelve la contraseña del usuario
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        // Devuelve el nombre de usuario del usuario
+        return nombre;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
 }
