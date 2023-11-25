@@ -18,7 +18,7 @@ public class Direccion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="Id")
     @JsonIgnore
-    private int id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")

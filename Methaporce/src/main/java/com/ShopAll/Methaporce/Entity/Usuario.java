@@ -15,6 +15,7 @@ import lombok.Data;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -54,6 +55,10 @@ public class Usuario implements UserDetails {
     @JsonManagedReference
     private List<Producto> productos;
 
+    @OneToMany(mappedBy = "usuario",cascade =CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Comentario> comentarios;
+
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Rol> roles = new HashSet<>();
     public Usuario(String username, String password) {
@@ -65,6 +70,7 @@ public class Usuario implements UserDetails {
         this.password = password;
         this.edad = edad;
         this.correo = correo;
+        this.productos = new ArrayList<>();
     }
 
     public Usuario(){}
@@ -72,7 +78,9 @@ public class Usuario implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Implementa la lógica para devolver las autoridades (roles) del usuario
         // Puedes utilizar la clase SimpleGrantedAuthority para representar roles
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+                .collect(Collectors.toList());
     }
 
     @Override

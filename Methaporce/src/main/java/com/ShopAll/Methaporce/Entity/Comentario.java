@@ -15,13 +15,7 @@ public class Comentario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="Id")
     @JsonIgnore
-    private int id;
-
-    @Column(name="Usuario_Id")
-    private int usuario_id;
-
-    @Column(name="Producto_Id")
-    private int producto_id;
+    private Long id;
 
     @Column(name="Comentario")
     private String comentario;
@@ -29,16 +23,19 @@ public class Comentario {
     @Column(name="Calificacion")
     private int calificacion;
 
-    @Column(name="Url")
-    private String url;
-
     @Column(name="Fecha_Hora")
     private String fecha_hora;
 
     @ManyToOne
-    @JoinColumn(name = "comentario_id")
+    @JoinColumn(name = "producto_id")
     @JsonBackReference
     @Schema(hidden = true)
     private Producto producto;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    @JsonBackReference
+    @Schema(hidden = true)
+    private Usuario usuario;
 
 }

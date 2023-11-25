@@ -35,8 +35,28 @@
 
 <!-- Contenido principal -->
 <div class="container mt-4">
-  <div>
+  <div class="row">
+    <!-- Cuadro para ir a la tienda -->
+    <div class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Ir a la tienda</h5>
+          <p class="card-text">Descubre nuestros productos.</p>
+          <a href="/tienda" class="btn btn-primary">Ir a la tienda</a>
+        </div>
+      </div>
+    </div>
 
+    <!-- Cuadro para administrar productos (visible solo para vendedores) -->
+    <div th:if="${esVendedor}" class="col-md-6 mb-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Administrar productos</h5>
+          <p class="card-text">Administra tus productos en venta.</p>
+          <a href="/administrar-productos" class="btn btn-success">Administrar productos</a>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

@@ -40,12 +40,11 @@ public class UserService implements UserDetailsService {
         return userRepository.findUsuarioByCorreo(correo)
                 .orElse(null);
     }
-
     public  Usuario getUserByUserName(String Name){
         return userRepository.findUsuarioByNombre(Name)
                 .orElse(null);
     }
-        public Usuario save(Usuario user) {
+    public Usuario save(Usuario user) {
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
         Optional<Usuario> existingUser = userRepository.findUsuarioByCorreo(user.getCorreo());
         // Crea un nuevo usuario con la contraseña encriptada
@@ -59,7 +58,9 @@ public class UserService implements UserDetailsService {
         }
         return userRepository.save(user);
     }
-
+    public boolean userNotExists(){
+        return userRepository.findAll().isEmpty();
+    }
     public Usuario Actualizar(Long id,Usuario user) {
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
         Optional<Usuario> existingUserOptional = userRepository.findUsuarioByCorreo(user.getCorreo());
@@ -88,11 +89,6 @@ public class UserService implements UserDetailsService {
             return null;
         }
     }
-    public boolean userNotExists(){
-        return userRepository.findAll().isEmpty();
-    }
-
-    //Servicio para borrar un Usuario por su Id
     public ResponseEntity<String> deleteUsuario(Long id) {
         if (userRepository.existsById(id)) {
             Usuario usuario= userRepository.findById(id).get();
@@ -105,7 +101,6 @@ public class UserService implements UserDetailsService {
             return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
         }
     }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
        Optional<Usuario> usuarioOptional=userRepository.findUsuarioByNombre(username);
