@@ -1,5 +1,6 @@
 package com.ShopAll.Methaporce.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -36,6 +37,10 @@ public class Producto {
     @JsonManagedReference
     private List<Comentario> comentarios;
 
-
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    @JsonBackReference
+    @Schema(hidden = true)
+    private Usuario usuario;
 
 }

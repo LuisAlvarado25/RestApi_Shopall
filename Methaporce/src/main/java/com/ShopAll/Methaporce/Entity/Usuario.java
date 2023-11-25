@@ -1,19 +1,18 @@
 package com.ShopAll.Methaporce.Entity;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.NonNull;
+
 
 import java.util.*;
 
@@ -38,16 +37,22 @@ public class Usuario implements UserDetails {
     @Column
     private Long telefono;
 
-    @Column(unique = true)
+    @Column
     @Email(message = "El formato del correo no es válido")
+    @NotBlank(message = "Este campo es obligatorio y no puede contener espacios vacios")
     private String correo;
 
     @Column
+    @NotBlank(message = "Este campo es obligatorio y no puede contener espacios vacios")
     private String password;
 
     @OneToMany(mappedBy = "usuario",cascade =CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Direccion> direcciones;
+
+    @OneToMany(mappedBy = "usuario",cascade =CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Producto> productos;
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Rol> roles = new HashSet<>();
@@ -55,6 +60,13 @@ public class Usuario implements UserDetails {
         this.nombre = username;
         this.password = password;
     }
+    public Usuario(String nombre, String password, int edad, String correo) {
+        this.nombre = nombre;
+        this.password = password;
+        this.edad = edad;
+        this.correo = correo;
+    }
+
     public Usuario(){}
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -95,4 +107,10 @@ public class Usuario implements UserDetails {
         return true;
     }
 
+    public String getCorreo() {
+        return correo;
+    }
+    public void setRoles(Set<Rol> roles) {
+        this.roles = roles;
+    }
 }

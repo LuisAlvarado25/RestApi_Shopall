@@ -1,10 +1,13 @@
 package com.ShopAll.Methaporce.Service;
 
+import com.ShopAll.Methaporce.Entity.Rol;
 import com.ShopAll.Methaporce.Entity.Usuario;
 import com.ShopAll.Methaporce.Exception.UserException;
 import com.ShopAll.Methaporce.Repository.RolRepository;
 import com.ShopAll.Methaporce.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,8 +40,12 @@ public class UserService implements UserDetailsService {
         return userRepository.findUsuarioByCorreo(correo)
                 .orElse(null);
     }
-        public Usuario save(Usuario user) {
 
+    public  Usuario getUserByUserName(String Name){
+        return userRepository.findUsuarioByNombre(Name)
+                .orElse(null);
+    }
+        public Usuario save(Usuario user) {
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
         Optional<Usuario> existingUser = userRepository.findUsuarioByCorreo(user.getCorreo());
         // Crea un nuevo usuario con la contraseña encriptada
@@ -53,39 +60,51 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public Usuario Actualizar(Long id,Usuario user) {
+        String encryptedPassword = passwordEncoder.encode(user.getPassword());
+        Optional<Usuario> existingUserOptional = userRepository.findUsuarioByCorreo(user.getCorreo());
+
+        if (existingUserOptional.isPresent()) {
+            Usuario usuarioExistente = existingUserOptional.get();
+            usuarioExistente.setEdad(user.getEdad());
+            usuarioExistente.setPassword(encryptedPassword);
+            usuarioExistente.setNombre(user.getNombre());
+            usuarioExistente.setApellido(user.getApellido());
+            usuarioExistente.setCorreo(user.getCorreo());
+            usuarioExistente.getDirecciones().clear();
+
+            // Asignar el usuario a cada dirección
+
+                user.getDirecciones().forEach(direccion -> {
+                    direccion.setUsuario(usuarioExistente);
+                    usuarioExistente.getDirecciones().add(direccion);
+                });
+
+            usuarioExistente.setRoles(user.getRoles());
+
+            return userRepository.save(usuarioExistente);
+        } else {
+            // El usuario no existe, haz lo que necesites aquí o lanza una excepción
+            return null;
+        }
+    }
     public boolean userNotExists(){
         return userRepository.findAll().isEmpty();
     }
 
-//    //Servicio para borrar un Usuario por su Id
-//    public ResponseEntity<String> deleteUsuario(Long id) {
-//        if (userRepository.existsById(id)) {
-//            Usuario usuario= userRepository.findById(id).get();
-//            usuario.getDirecciones().forEach(direccion -> direccion.setUsuario(null));
-//            usuario.setDirecciones(null);
-//            usuario.setRoles(null);
-//            userRepository.deleteById(id);
-//            return new ResponseEntity<>("Usuario eliminado con éxito", HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
-//        }
-//    }
-//
-//    //Servicio para actualizar la Informacion del Usuario
-//    public ResponseEntity<String> UpdateUsuario(Long id, Usuario usuarioActualizado) {
-//        if (userRepository.existsById(id)) {
-//            Usuario usuarioExistente = userRepository.findById(id).get();
-//            usuarioExistente.setNombre(usuarioActualizado.getNombre());
-//            usuarioExistente.setApellido(usuarioActualizado.getApellido());
-//            usuarioExistente.setTelefono(usuarioActualizado.getTelefono());
-//            usuarioExistente.setPassword(usuarioActualizado.getPassword());
-//            usuarioExistente.setCorreo(usuarioActualizado.getCorreo());
-//            userRepository.save(usuarioExistente);
-//            return new ResponseEntity<>("Usuario actualizado con éxito", HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
-//        }
-//    }
+    //Servicio para borrar un Usuario por su Id
+    public ResponseEntity<String> deleteUsuario(Long id) {
+        if (userRepository.existsById(id)) {
+            Usuario usuario= userRepository.findById(id).get();
+            usuario.getDirecciones().forEach(direccion -> direccion.setUsuario(null));
+            usuario.setDirecciones(null);
+            usuario.setRoles(null);
+            userRepository.deleteById(id);
+            return new ResponseEntity<>("Usuario eliminado con éxito", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+        }
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
