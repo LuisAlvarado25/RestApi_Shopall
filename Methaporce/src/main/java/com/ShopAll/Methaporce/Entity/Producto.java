@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -42,5 +43,16 @@ public class Producto {
     @JsonBackReference
     @Schema(hidden = true)
     private Usuario usuario;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ListaCarrito> listaCarritos;
+
+    public void agregarComentario(Comentario comentario) {
+        if (comentarios == null) {
+            comentarios = new ArrayList<>();
+        }
+        comentarios.add(comentario);
+        comentario.setProducto(this); // Asegura la relación bidireccional
+    }
 
 }

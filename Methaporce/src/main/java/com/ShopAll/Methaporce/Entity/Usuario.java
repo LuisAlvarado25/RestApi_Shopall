@@ -61,6 +61,16 @@ public class Usuario implements UserDetails {
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Rol> roles = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference
+    private List<Carrito> carritos=new ArrayList<Carrito>();
+
+    // Otros métodos y constructores
+
+    public List<Carrito> getCarritos() {
+        return carritos;
+    }
     public Usuario(String username, String password) {
         this.nombre = username;
         this.password = password;
@@ -76,8 +86,6 @@ public class Usuario implements UserDetails {
     public Usuario(){}
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Implementa la lógica para devolver las autoridades (roles) del usuario
-        // Puedes utilizar la clase SimpleGrantedAuthority para representar roles
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
                 .collect(Collectors.toList());
@@ -91,7 +99,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getUsername() {
-        // Devuelve el nombre de usuario del usuario
+
         return nombre;
     }
 
@@ -118,6 +126,7 @@ public class Usuario implements UserDetails {
     public String getCorreo() {
         return correo;
     }
+
     public void setRoles(Set<Rol> roles) {
         this.roles = roles;
     }

@@ -30,12 +30,15 @@ public class UserService implements UserDetailsService {
         this.userRepository=userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    //Servicio para obtener todos los Usuarios
+
     public  List<Usuario> getUsers1() {
         return userRepository.findAll();
     }
 
-    //Servicio para consultar un Usuario por ID
+    public  Usuario getUserByid(Long id){
+        return  userRepository.findById(id).orElse(null);
+    }
+
     public Usuario getUserByCorreo(String correo) {
         return userRepository.findUsuarioByCorreo(correo)
                 .orElse(null);
@@ -47,7 +50,7 @@ public class UserService implements UserDetailsService {
     public Usuario save(Usuario user) {
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
         Optional<Usuario> existingUser = userRepository.findUsuarioByCorreo(user.getCorreo());
-        // Crea un nuevo usuario con la contraseña encriptada
+
             user.setPassword(encryptedPassword);
             if (user.getDirecciones() != null) {
                 user.getDirecciones().forEach(direccion -> direccion.setUsuario(user));
@@ -73,10 +76,7 @@ public class UserService implements UserDetailsService {
             usuarioExistente.setApellido(user.getApellido());
             usuarioExistente.setCorreo(user.getCorreo());
             usuarioExistente.getDirecciones().clear();
-
-            // Asignar el usuario a cada dirección
-
-                user.getDirecciones().forEach(direccion -> {
+            user.getDirecciones().forEach(direccion -> {
                     direccion.setUsuario(usuarioExistente);
                     usuarioExistente.getDirecciones().add(direccion);
                 });
@@ -85,7 +85,7 @@ public class UserService implements UserDetailsService {
 
             return userRepository.save(usuarioExistente);
         } else {
-            // El usuario no existe, haz lo que necesites aquí o lanza una excepción
+
             return null;
         }
     }

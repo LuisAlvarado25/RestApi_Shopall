@@ -41,7 +41,6 @@ public class SecurityConfig {
     @Bean
     public AuthenticationSuccessHandler loginSuccessHandler() {
         return (request, response, authentication) -> {
-            // Redirige a la página de éxito después del login
             response.sendRedirect("/login-success");
         };
     }
@@ -49,7 +48,6 @@ public class SecurityConfig {
     @Bean
     public AuthenticationFailureHandler loginFailureHandler() {
         return (request, response, exception) -> {
-            // Redirige a la página de error después del login fallido
             response.sendRedirect("/login-error");
         };
     }

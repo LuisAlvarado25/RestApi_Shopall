@@ -19,7 +19,7 @@ public class Rol {
 
     private String name;
     public Rol() {
-        // default constructor
+
     }
 
     public Rol(String name){

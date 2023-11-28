@@ -1,7 +1,15 @@
 package com.ShopAll.Methaporce.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -9,17 +17,18 @@ import lombok.Data;
 public class Carrito {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="Id")
-    private int id;
+    @Column(name = "Id")
+    private Long id;
 
-    @Column(name="Usuario_Id")
-    private int usuario_id;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private Usuario user;
 
-    @Column(name="Producto_Id")
-    private int producto_id;
+    @OneToMany(mappedBy = "carrito",cascade =CascadeType.ALL,fetch = FetchType.LAZY,orphanRemoval = true)
+    @JsonManagedReference
+    private List<ListaCarrito> listaCarritos= new ArrayList<>();
 
-    @Column(name="Cantidad")
-    private int Cantidad;
-
+    @OneToMany(mappedBy = "carrito", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaccion> transacciones;
 
 }

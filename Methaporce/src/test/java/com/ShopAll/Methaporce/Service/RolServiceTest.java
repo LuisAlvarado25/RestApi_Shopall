@@ -18,13 +18,13 @@ class RolServiceTest {
     @Mock
     private RolRepository roleRepository;
 
-    // Supongamos que tienes un servicio que contiene el método save
+
     @InjectMocks
     private RolService rolService;
 
     @BeforeEach
     public void setUp() {
-        // Inicializa el mock antes de cada prueba
+
         MockitoAnnotations.openMocks(this);
     }
 
