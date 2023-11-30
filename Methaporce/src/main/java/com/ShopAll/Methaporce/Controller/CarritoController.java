@@ -32,11 +32,6 @@ public class CarritoController {
     @GetMapping("/carrito")
     public String verCarrito(@AuthenticationPrincipal UserDetails userDetails, Model model, Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
-            String nombreUsuario1 = userDetails.getUsername();
-            model.addAttribute("nombreUsuario", nombreUsuario1);
-            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-            boolean esVendedor = authorities.stream().anyMatch(role -> role.getAuthority().equals("ROLE_Vendedor"));
-            model.addAttribute("esVendedor", esVendedor);
             String nombreUsuario = authentication.getName();
             Usuario usuario = userService.getUserByUserName(nombreUsuario);
             Carrito carrito = carritoService.obtenerCarritoPorUsuario(usuario);
@@ -47,17 +42,16 @@ public class CarritoController {
                 model.addAttribute("total", total);
             }
         }
-
         return "carrito";
     }
     private double calcularTotal(List<ListaCarrito> productosEnCarrito) {
         double total = 0.0;
         for (ListaCarrito item : productosEnCarrito) {
-            // Multiplicar la cantidad por el precio y sumar al total
             total += item.getCantidad() * item.getProducto().getPrecio();
         }
         return total;
     }
+
 
     @PostMapping("/agregar-al-carrito")
     public String agregarAlCarrito(@RequestParam("productoId") Long productoId,
@@ -65,7 +59,6 @@ public class CarritoController {
                                    HttpSession session, Authentication authentication) {
 
         if (authentication != null && authentication.isAuthenticated()) {
-
             String nombreUsuario = authentication.getName();
             Usuario usuario = userService.getUserByUserName(nombreUsuario);
             Carrito carrito = obtenerOcrearCarrito(usuario, session);
@@ -137,24 +130,32 @@ public class CarritoController {
         Usuario usuario = userService.getUserByUserName(nombreUsuario);
         Carrito carrito = carritoService.obtenerCarritoPorUsuario(usuario);
         if (verificarStockSuficiente(carrito.getListaCarritos())) {
-        Transaccion transaccion = new Transaccion();
-        transaccion.setUsuario(usuario);
-        transaccion.setCarrito(carrito);
-        transaccion.setTotal(calcularTotal(carrito.getListaCarritos()));
-        transaccionService.guardarTransaccion(transaccion);
-        restarStockProductos(carrito.getListaCarritos());
-        limpiarCarrito(carrito);
+            Transaccion transaccion = new Transaccion();
+            transaccion.setUsuario(usuario);
+            transaccion.setCarrito(carrito);
+            transaccion.setTotal(calcularTotal(carrito.getListaCarritos()));
+            List<DetalleTransaccion> detalles = new ArrayList<>();
+            for (ListaCarrito productoCarrito : carrito.getListaCarritos()) {
+                DetalleTransaccion detalle = new DetalleTransaccion();
+                detalle.setProducto(productoCarrito.getProducto());
+                detalle.setCantidad(productoCarrito.getCantidad());
+                detalle.setTransaccion(transaccion);
+                detalles.add(detalle);
+            }
+            transaccion.setDetallesTransaccion(detalles);
+            transaccionService.guardarTransaccion(transaccion);
+            restarStockProductos(carrito.getListaCarritos());
+            limpiarCarrito(carrito);
 
-        return "redirect:/carrito";
+            return "redirect:/carrito";
         }
+
         return "redirect:/carrito";
     }
     public void limpiarCarrito(Carrito carrito) {
         carrito.getListaCarritos().clear();
         carritoService.Save(carrito);
     }
-
-
     private boolean verificarStockSuficiente(List<ListaCarrito> listaCarritos) {
         for (ListaCarrito listaCarrito : listaCarritos) {
             Producto producto = listaCarrito.getProducto();
@@ -163,9 +164,8 @@ public class CarritoController {
                 return false; // No hay suficiente stock
             }
         }
-        return true; // Hay suficiente stock para todos los productos en el carrito
+        return true;
     }
-
     private void restarStockProductos(List<ListaCarrito> listaCarritos) {
         for (ListaCarrito listaCarrito : listaCarritos) {
             Producto producto = listaCarrito.getProducto();

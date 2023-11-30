@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface TransaccionRepository extends JpaRepository<Transaccion, Long> {
  List<Transaccion> findByUsuario(Usuario usuario);
+
+
  }

@@ -25,14 +25,20 @@ public class ProductService {
     public Optional<Producto> findByNombre(String nombre) {
         return productRepository.findByNombre(nombre);
     }
-
     public List<Producto> obtenerTodosLosProductos() {
         return productRepository.findAll();
+    }
+
+    public  List<Producto> ObtenerProductosporCategoria(String categoria){
+        return  productRepository.findByCategoria(categoria);
     }
     public List<Producto> obtenerProductosPorUsuario(String nombreUsuario) {
         return productRepository.findByUsuarioNombre(nombreUsuario);
     }
 
+    public List<Producto> buscarPorNombreODescripcion(String query) {
+        return productRepository.findByNombreContainingIgnoreCaseOrDescripcionContainingIgnoreCase(query, query);
+    }
     @Transactional
     public void Save(Producto producto){
         productRepository.save(producto);

@@ -1,10 +1,13 @@
 package com.ShopAll.Methaporce.Service;
 
+import com.ShopAll.Methaporce.Entity.Direccion;
 import com.ShopAll.Methaporce.Entity.Rol;
 import com.ShopAll.Methaporce.Entity.Usuario;
 import com.ShopAll.Methaporce.Exception.UserException;
+import com.ShopAll.Methaporce.Repository.DireccionesRepository;
 import com.ShopAll.Methaporce.Repository.RolRepository;
 import com.ShopAll.Methaporce.Repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,10 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     @Autowired
     private RolRepository rolRepository;
+    @Autowired
+    private DireccionesService direccionesService;
+    @Autowired
+    private DireccionesRepository direccionesRepository;
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
         this.userRepository=userRepository;
@@ -47,24 +54,28 @@ public class UserService implements UserDetailsService {
         return userRepository.findUsuarioByNombre(Name)
                 .orElse(null);
     }
+
+    @Transactional
     public Usuario save(Usuario user) {
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
         Optional<Usuario> existingUser = userRepository.findUsuarioByCorreo(user.getCorreo());
-
-            user.setPassword(encryptedPassword);
-            if (user.getDirecciones() != null) {
-                user.getDirecciones().forEach(direccion -> direccion.setUsuario(user));
-            }
-
+        user.setPassword(encryptedPassword);
+        Direccion direccion=user.getDireccion();
         if (existingUser.isPresent()) {
             throw new UserException("El correo ya esta registrado");
         }
-        return userRepository.save(user);
+        userRepository.save(user);
+        if (direccion != null) {
+            direccion.setUser(user);
+        }
+
+        return user;
     }
     public boolean userNotExists(){
         return userRepository.findAll().isEmpty();
     }
-    public Usuario Actualizar(Long id,Usuario user) {
+    @Transactional
+    public Usuario Actualizar(Long id, Usuario user) {
         String encryptedPassword = passwordEncoder.encode(user.getPassword());
         Optional<Usuario> existingUserOptional = userRepository.findUsuarioByCorreo(user.getCorreo());
 
@@ -75,25 +86,32 @@ public class UserService implements UserDetailsService {
             usuarioExistente.setNombre(user.getNombre());
             usuarioExistente.setApellido(user.getApellido());
             usuarioExistente.setCorreo(user.getCorreo());
-            usuarioExistente.getDirecciones().clear();
-            user.getDirecciones().forEach(direccion -> {
-                    direccion.setUsuario(usuarioExistente);
-                    usuarioExistente.getDirecciones().add(direccion);
-                });
+            usuarioExistente.setTelefono(user.getTelefono());
+
+            Direccion direccion = user.getDireccion();
+            if (direccion != null) {
+                // Verificar si la dirección no es nula antes de intentar acceder a sus propiedades
+                usuarioExistente.getDireccion().setCalle(direccion.getCalle());
+                usuarioExistente.getDireccion().setNumero(direccion.getNumero());
+                usuarioExistente.getDireccion().setColonia(direccion.getColonia());
+                usuarioExistente.getDireccion().setCiudad(direccion.getCiudad());
+                usuarioExistente.getDireccion().setCp(direccion.getCp());
+            }
 
             usuarioExistente.setRoles(user.getRoles());
+            userRepository.save(usuarioExistente);
 
-            return userRepository.save(usuarioExistente);
+            return usuarioExistente;
         } else {
-
+            // Manejar el caso cuando el Optional no contiene un valor
             return null;
         }
     }
     public ResponseEntity<String> deleteUsuario(Long id) {
         if (userRepository.existsById(id)) {
             Usuario usuario= userRepository.findById(id).get();
-            usuario.getDirecciones().forEach(direccion -> direccion.setUsuario(null));
-            usuario.setDirecciones(null);
+//            usuario.getDirecciones().forEach(direccion -> direccion.setUsuario(null));
+//            usuario.setDirecciones(null);
             usuario.setRoles(null);
             userRepository.deleteById(id);
             return new ResponseEntity<>("Usuario eliminado con éxito", HttpStatus.OK);

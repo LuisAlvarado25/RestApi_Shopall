@@ -2,6 +2,7 @@ package com.ShopAll.Methaporce.config;
 
 import com.ShopAll.Methaporce.Entity.*;
 import com.ShopAll.Methaporce.Service.*;
+import jakarta.validation.constraints.Negative;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -34,19 +35,19 @@ public class DataInitializer implements CommandLineRunner {
             roleService.save(role2);
 
             usuario.setRoles(Set.of(role1, role2));
-            Direccion direccion = new Direccion();
+            Direccion direccion=new Direccion();
             direccion.setCalle("AdminStreet");
-
-
+            direccion.setCp(37300);
+            direccion.setCiudad("León");
+            direccion.setNumero(502);
             userService.save(usuario);
-            direccion.setUsuario(usuario);
+            direccion.setUser(usuario);
             direccionesService.Save(direccion);
-
             Producto producto = new Producto();
             producto.setNombre("Camisa");
             producto.setDescripcion("Camisa1");
             producto.setPrecio(19.99);
-            producto.setCategoria("Ropa");
+            producto.setCategoria("Moda");
             producto.setCantidad(10);
             producto.setUsuario(usuario);
             usuario.getProductos().add(producto);

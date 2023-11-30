@@ -31,21 +31,18 @@ public class ProductController {
     private UserService userService;
     @GetMapping("/Productos")
     public String Productos(Model model) {
-        String nombreUsuario =productoService.obtenerNombreUsuario();
-        boolean esVendedor = productoService.esUsuarioVendedor();
-        model.addAttribute("nombreUsuario", nombreUsuario);
-        model.addAttribute("esVendedor", esVendedor);
         List<Producto> productos = productoService.obtenerTodosLosProductos();
         model.addAttribute("productos", productos);
         return "Productos";
     }
-
+    @GetMapping("/ProductosCategoria")
+    public String ProductosbyCategoria(@RequestParam(name = "categoria") String categoria, Model model)  {
+        List<Producto> productos = productoService.ObtenerProductosporCategoria(categoria);
+        model.addAttribute("productos", productos);
+        return "Productos";
+    }
     @GetMapping("/GestionarProductos")
     public String gestionarProductos(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        String nombreUsuario1=productoService.obtenerNombreUsuario();
-        boolean esVendedor = productoService.esUsuarioVendedor();
-        model.addAttribute("nombreUsuario", nombreUsuario1);
-        model.addAttribute("esVendedor", esVendedor);
         String nombreUsuario = userDetails.getUsername();
         List<Producto> productosUsuario = productoService.obtenerProductosPorUsuario(nombreUsuario);
         model.addAttribute("productosUsuario", productosUsuario);
@@ -53,11 +50,6 @@ public class ProductController {
     }
     @GetMapping("/NuevoProducto")
     public String nuevoProductoForm(@AuthenticationPrincipal UserDetails userDetails,Model model, Principal principal) {
-        String nombreUsuario1= userDetails.getUsername();
-        model.addAttribute("nombreUsuario", nombreUsuario1);
-        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        boolean esVendedor = authorities.stream().anyMatch(role -> role.getAuthority().equals("ROLE_Vendedor"));
-        model.addAttribute("esVendedor", esVendedor);
         String username = principal.getName();
         Usuario usuario = userService.getUserByUserName(username);
         model.addAttribute("usuarioId", usuario.getId());
@@ -68,10 +60,6 @@ public class ProductController {
 
     @GetMapping("/EditarProducto/{id}")
     public String EditarProducto(@PathVariable Long id, Model model) {
-        String nombreUsuario =productoService.obtenerNombreUsuario();
-        boolean esVendedor = productoService.esUsuarioVendedor();
-        model.addAttribute("nombreUsuario", nombreUsuario);
-        model.addAttribute("esVendedor", esVendedor);
         Producto producto = productoService.obtenerProductoPorId(id);
         model.addAttribute("producto", producto);
         return "EditarProducto";
@@ -90,7 +78,6 @@ public class ProductController {
         productoService.Save(nuevoProducto);
         return "NuevoProducto";
     }
-
     @PostMapping("/agregar-comentario")
     public String agregarComentario(@RequestParam("comentario") String comentario,
                                     @RequestParam("productoId") Long productoId) {
@@ -109,14 +96,24 @@ public class ProductController {
         }
 
 
-        return "Productos";
+        return "redirect:/Productos";
+    }
+
+    @GetMapping("/buscar-productos")
+    public String buscarProductos(@RequestParam(name = "q", required = false) String query, Model model) {
+        List<Producto> productos;
+        if (query != null && !query.isEmpty()) {
+            productos = productoService.buscarPorNombreODescripcion(query);
+        } else {
+            productos = productoService.obtenerTodosLosProductos();
+        }
+        model.addAttribute("productos", productos);
+        return "/Productos";
     }
 
     @PostMapping("/editar-producto/{id}")
     public String editarProducto(@PathVariable Long id, @ModelAttribute("producto") Producto productoEditado) {
-
         Producto productoExistente = productoService.obtenerProductoPorId(id);
-
         if (productoExistente != null) {
             productoExistente.setNombre(productoEditado.getNombre());
             productoExistente.setDescripcion(productoEditado.getDescripcion());

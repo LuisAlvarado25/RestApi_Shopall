@@ -47,9 +47,9 @@ public class Usuario implements UserDetails {
     @NotBlank(message = "Este campo es obligatorio y no puede contener espacios vacios")
     private String password;
 
-    @OneToMany(mappedBy = "usuario",cascade =CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<Direccion> direcciones;
+    private Direccion direccion;
 
     @OneToMany(mappedBy = "usuario",cascade =CascadeType.ALL,fetch = FetchType.LAZY)
     @JsonManagedReference
@@ -66,7 +66,6 @@ public class Usuario implements UserDetails {
     @JsonManagedReference
     private List<Carrito> carritos=new ArrayList<Carrito>();
 
-    // Otros métodos y constructores
 
     public List<Carrito> getCarritos() {
         return carritos;
@@ -129,5 +128,11 @@ public class Usuario implements UserDetails {
 
     public void setRoles(Set<Rol> roles) {
         this.roles = roles;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nombre, apellido, edad, telefono, correo, password);
     }
 }

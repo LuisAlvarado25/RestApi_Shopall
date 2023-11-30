@@ -4,8 +4,11 @@
     import com.ShopAll.Methaporce.Entity.Direccion;
     import com.ShopAll.Methaporce.Entity.Rol;
     import com.ShopAll.Methaporce.Entity.Usuario;
+    import com.ShopAll.Methaporce.Exception.UserException;
     import com.ShopAll.Methaporce.Repository.CarritoRepository;
+    import com.ShopAll.Methaporce.Repository.DireccionesRepository;
     import com.ShopAll.Methaporce.Repository.RolRepository;
+    import com.ShopAll.Methaporce.Service.DireccionesService;
     import com.ShopAll.Methaporce.Service.UserService;
     import io.swagger.v3.oas.annotations.tags.Tag;
     import jakarta.servlet.http.HttpServletRequest;
@@ -38,6 +41,9 @@
     private final UserService userService;
     @Autowired
     private RolRepository rolRepository;
+
+    @Autowired
+    private DireccionesService direccionesService;
     @Autowired
     private CarritoRepository carritoRepository;
     @Autowired
@@ -61,42 +67,24 @@
             }
             return "redirect:/login";
         }
-
         @GetMapping("/login-success")
         public String loginSuccessPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-            String nombreUsuario = userDetails.getUsername();
-            model.addAttribute("nombreUsuario", nombreUsuario);
-            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-            boolean esVendedor = authorities.stream().anyMatch(role -> role.getAuthority().equals("ROLE_Vendedor"));
-            model.addAttribute("esVendedor", esVendedor);
-            return "login-success";
+        return "login-success";
         }
         @GetMapping("/login-error")
         public String loginFailurePage() {
             return "login-error";
         }
-
         @GetMapping("/Registro")
         public String Registro(Model model) {
             List<Rol> listRoles=rolRepository.findAll();
             Usuario usuario = new Usuario();
-            List<Direccion> direcciones = new ArrayList<>(); // Crear una nueva lista de direcciones
-            Direccion direccion = new Direccion(); // Crear una nueva instancia de Direccion
-            direcciones.add(direccion); // Agregar la instancia a la lista
-            usuario.setDirecciones(direcciones);
-            usuario.setDirecciones(direcciones);
             model.addAttribute("listRoles",listRoles);
             model.addAttribute("Usuario" ,usuario);
             return "Registro";
         }
         @GetMapping("/Actualizar")
         public String Actualizar(@AuthenticationPrincipal UserDetails userDetails,Model model) {
-            String nombreUsuario1 = userDetails.getUsername();
-            model.addAttribute("nombreUsuario", nombreUsuario1);
-            Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-
-            boolean esVendedor = authorities.stream().anyMatch(role -> role.getAuthority().equals("ROLE_Vendedor"));
-            model.addAttribute("esVendedor", esVendedor);
             List<Rol> listRoles=rolRepository.findAll();
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String nombreUsuario = authentication.getName();
@@ -109,14 +97,9 @@
         @GetMapping("/borrar-cuenta")
         public String borrarCuenta(Model model) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-
             if (authentication != null && authentication.getDetails() != null) {
-
                 Usuario usuario = (Usuario) authentication.getPrincipal();
                 Long userId = usuario.getId();
-
-
                 if (usuario.getCarritos() != null) {
                     for (Carrito carrito : usuario.getCarritos()) {
                         carritoRepository.delete(carrito);
@@ -130,27 +113,28 @@
 
         @PostMapping("/register")
         public String registerUser(@Valid @ModelAttribute("Usuario")Usuario usuario, BindingResult bindingResult,Model model) {
-
             if (bindingResult.hasErrors()) {
                 model.addAttribute("listRoles", this.rolRepository.findAll());
                 model.addAttribute("Usuario", usuario);
-                System.out.println(usuario);
                 return "Registro";
             }
-            userService.save(usuario);
-            return "redirect:/login";
+            try {
+                userService.save(usuario);
+                return "redirect:/login";
+            } catch (UserException e) {
+                model.addAttribute("error", e.getMessage());
+                model.addAttribute("listRoles", this.rolRepository.findAll());
+                return "Registro";
+            }
         }
 
         @PostMapping("/EnviarActualizacion")
         public String ActualizarUSer(@Valid @ModelAttribute("Usuario")Usuario usuario, BindingResult bindingResult,Model model) {
-
             if (bindingResult.hasErrors()) {
                 model.addAttribute("listRoles", this.rolRepository.findAll());
                 model.addAttribute("Usuario", usuario);
-                System.out.println(usuario);
                 return "Actualizar";
             }
-
             userService.Actualizar(usuario.getId(),usuario);
             return "redirect:/login-success";
         }

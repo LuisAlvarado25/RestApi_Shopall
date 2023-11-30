@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  <style>
+        body {
+            padding-top: 70px; /* Ajusta según el tamaño de tu barra de navegación */
+        }
+         .profile-image {
+        width: 30px; /* Ajusta el tamaño según tu preferencia */
+        height: 30px; /* Ajusta el tamaño según tu preferencia */
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+    }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#">ACSHOP</a>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="cuentaDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <img class="profile-image rounded-circle" src="/img/login-icon.svg" >
+            Hola, <span th:text="${nombreUsuario}"></span>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="cuentaDropdown">
+            <a class="dropdown-item" href="/Actualizar">Editar</a>
+            <a class="dropdown-item" href="/borrar-cuenta">Borrar cuenta</a>
+            <a class="dropdown-item" href="/Productos">Tienda</a>
+            <a th:if="${esVendedor}" class="dropdown-item" href="/GestionarProductos">Mis Productos</a>
+            <a class="dropdown-item" href="/carrito">Carrito</a>
+            <a class="dropdown-item" href="/Transacciones">Transacciones</a>
+            <a class="dropdown-item text-danger" href="/logout">Cerrar sesion</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container mt-4">
+  <h2>Detalles de la Transacción</h2>
+<div class="px-3 card shadow">
+  <h3>Datos del Usuario</h3>
+  <p th:if="${usuario != null}" th:text="${usuario.nombre != null ? usuario.nombre : ''} + ' ' + ${usuario.apellido != null ? usuario.apellido : ''}"></p>
+  <h3>Domicilio</h3>
+  <p th:if="${usuario != null}">
+    <span> Calle: </span>
+    <span th:text="${usuario.direccion.calle != null ? usuario.direccion.calle : ''}"></span>
+    <br/>
+
+    <span> Número: </span>
+    <span th:text="${usuario.direccion.numero != null ? usuario.direccion.numero : ''}"></span>
+    <br/>
+
+    <span> Colonia: </span>
+    <span th:text="${usuario.direccion.colonia != null ? usuario.direccion.colonia : ''}"></span>
+    <br/>
+
+    <span> Código Postal (CP): </span>
+    <span th:text="${usuario.direccion.cp != null ? usuario.direccion.cp : ''}"></span>
+    <br/>
+
+    <span> Ciudad: </span>
+    <span th:text="${usuario.direccion.ciudad != null ? usuario.direccion.ciudad : ''}"></span>
+  </p>
+<!--  <p th:if="${usuario != null and usuario.direccion != null " th:text="${usuario.direccion?.calle + ' ' + usuario.direccion?.numero + ', ' + usuario.direccion?.colonia + ', ' + usuario.direccion?.cp + ', ' + usuario.direccion?.ciudad}"></p>-->
+</div>
+
+  <h3>Productos de la Transacción</h3>
+  <table class="table">
+    <thead class="table-dark">
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Cantidad</th>
+      <!-- Agrega más columnas según sea necesario -->
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="producto : ${productosTransaccion}">
+      <td th:text="${producto.id}"></td>
+      <td th:text="${producto.nombre}"></td>
+      <td th:text="${producto.cantidad}"></td>
+      <!-- Agrega más celdas según sea necesario -->
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI/tTQ7Mlhy8zmN8eAqfPLfu2KOz9q+L2+8A+YFc=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

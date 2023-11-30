@@ -7,16 +7,24 @@
     body {
         padding-top: 70px; /* Ajusta según el tamaño de tu barra de navegación */
     }
+     .profile-image {
+        width: 30px; /* Ajusta el tamaño según tu preferencia */
+        height: 30px; /* Ajusta el tamaño según tu preferencia */
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+    }
 </style>
 <body class="bg-light">
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="#">ShopAll</a>
+        <a class="navbar-brand" href="#">ACSHOP</a>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="cuentaDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img class="profile-image rounded-circle" src="/img/login-icon.svg" >
                         Hola, <span th:text="${nombreUsuario}"></span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="cuentaDropdown">
@@ -44,8 +52,6 @@
                 <th>Cantidad</th>
                 <th>Precio</th>
                 <th></th>
-
-
             </tr>
             </thead>
             <tbody>

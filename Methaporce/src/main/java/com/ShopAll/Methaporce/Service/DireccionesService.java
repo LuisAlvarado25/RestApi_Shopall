@@ -1,7 +1,9 @@
 package com.ShopAll.Methaporce.Service;
 
+import com.ShopAll.Methaporce.Entity.Carrito;
 import com.ShopAll.Methaporce.Entity.Direccion;
 import com.ShopAll.Methaporce.Entity.Producto;
+import com.ShopAll.Methaporce.Entity.Usuario;
 import com.ShopAll.Methaporce.Repository.DireccionesRepository;
 import com.ShopAll.Methaporce.Repository.ProductRepository;
 import jakarta.transaction.Transactional;
@@ -17,5 +19,9 @@ public class DireccionesService {
     @Transactional
     public void Save(Direccion direccion){
         direccionesRepository.save(direccion);
+    }
+
+    public Direccion obtenerCarritoPorUsuario(Usuario usuario) {
+        return direccionesRepository.findByUser(usuario);
     }
 }

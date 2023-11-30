@@ -6,6 +6,7 @@ import lombok.Data;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Data
@@ -19,6 +20,9 @@ public class Transaccion {
     @ManyToOne
     @JoinColumn(name = "Usuario_Id")
     private Usuario usuario;
+
+    @OneToMany(mappedBy = "transaccion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetalleTransaccion> detallesTransaccion;
 
     @ManyToOne
     @JoinColumn(name = "Carrito_Id")

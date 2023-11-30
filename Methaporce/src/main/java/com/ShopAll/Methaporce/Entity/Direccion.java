@@ -10,6 +10,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.Objects;
+
 @Entity
 @Data
 @Table(name = "Direcciones")
@@ -20,11 +22,10 @@ public class Direccion {
     @JsonIgnore
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @OneToOne
+    @JoinColumn(name = "user_id")
     @JsonBackReference
-    @Schema(hidden = true)
-    private Usuario usuario;
+    private Usuario user;
 
     @Column(name="Calle")
     private String calle;
@@ -40,5 +41,10 @@ public class Direccion {
 
     @Column(name="Ciudad")
     private String ciudad;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, calle, numero, colonia, cp, ciudad);
+    }
 
 }

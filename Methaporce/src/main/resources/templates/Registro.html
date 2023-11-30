@@ -12,35 +12,36 @@
       padding-top: 70px;
       padding-bottom: 50px;
   }
+   .profile-image {
+        width: 30px; /* Ajusta el tamaño según tu preferencia */
+        height: 30px; /* Ajusta el tamaño según tu preferencia */
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+    }
 </style>
-<body>
+<body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container">
-    <a class="navbar-brand" href="#">ShopAll</a>
+    <a class="navbar-brand" href="#">ACSHOP</a>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="cuentaDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-           Registro <span th:text="${nombreUsuario}"></span>
+            Registro <span th:text="${nombreUsuario}"></span>
           </a>
-<!--          <div class="dropdown-menu" aria-labelledby="cuentaDropdown">-->
-<!--            <a class="dropdown-item" href="/Actualizar">Editar</a>-->
-<!--            <a class="dropdown-item" href="/borrar-cuenta">Borrar cuenta</a>-->
-<!--            <a class="dropdown-item" href="/Productos">Tienda</a>-->
-<!--            <a th:if="${esVendedor}" class="dropdown-item" href="/GestionarProductos">Mis Productos</a>-->
-<!--            <a class="dropdown-item" href="#">Carrito</a>-->
-<!--            <a class="dropdown-item text-danger" href="/logout">Cerrar sesion</a>-->
-<!--          </div>-->
         </li>
       </ul>
     </div>
   </div>
 </nav>
 
-<div class="container bg-white p-5 rounded-5 text-secondary shadow">
+<div class="container bg-white p-5 rounded-5 text-secondary card shadow">
   <h1 class="form-title text-center">Nuevo Usuario</h1>
-
-  <form action="/register" method="post" th:object="${Usuario}">
+  <div th:if="${error}" class="alert alert-danger" role="alert">
+    <span th:text="${error}"></span>
+  </div>
+  <form action="/register" method="post" th:object="${Usuario}" onsubmit="return validatePasswords()">
 
     <div class="mb-3">
       <label for="nombre" class="form-label">Username:</label>
@@ -72,6 +73,12 @@
     </div>
 
     <div class="mb-3">
+      <label for="confirmPassword" class="form-label">Confirm Password:</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
+      <div class="error-container text-danger" id="confirmPasswordError"></div>
+    </div>
+
+    <div class="mb-3">
       <label for="edad" class="form-label">Edad:</label>
       <input type="number" id="edad" name="edad" class="form-control" th:value="${Usuario.edad}">
       <div class="error-container">
@@ -80,43 +87,37 @@
     </div>
 
     <div class="mb-3">
-      <label for="confirmPassword" class="form-label">Confirm Password:</label>
-      <input type="password" id="confirmPassword" name="confirmPassword" class="form-control">
-    </div>
-
-    <div class="mb-3">
       <label for="telefono" class="form-label">Telefono:</label>
       <input type="text" id="telefono" name="telefono" class="form-control" th:value="${Usuario.telefono}">
     </div>
-
-    <div class="mb-3">
-      <label for="ciudad" class="form-label">Ciudad:</label>
-      <input type="text" id="ciudad" name="direcciones[0].ciudad" class="form-control"
-             th:value="${Usuario.direcciones[0].ciudad}"/>
-    </div>
-
-    <div class="mb-3">
-      <label for="cp" class="form-label">Código Postal:</label>
-      <input type="text" id="cp" name="direcciones[0].cp" class="form-control"
-             th:value="${Usuario.direcciones[0].cp}"/>
-    </div>
-
-    <div class="mb-3">
-      <label for="colonia" class="form-label">Colonia:</label>
-      <input type="text" id="colonia" name="direcciones[0].colonia" class="form-control"
-             th:value="${Usuario.direcciones[0].colonia}"/>
-    </div>
-
     <div class="mb-3">
       <label for="calle" class="form-label">Calle:</label>
-      <input type="text" id="calle" name="direcciones[0].calle" class="form-control"
-             th:value="${Usuario.direcciones[0].calle}"/>
+      <input type="text" id="calle" name="direccion.calle" class="form-control"
+             th:value="${Usuario.direccion != null ? Usuario.direccion.calle : ''}"/>
     </div>
 
     <div class="mb-3">
       <label for="numero" class="form-label">Número:</label>
-      <input type="text" id="numero" name="direcciones[0].numero" class="form-control"
-             th:value="${Usuario.direcciones[0].numero}"/>
+      <input type="text" id="numero" name="direccion.numero" class="form-control"
+             th:value="${Usuario.direccion != null ? Usuario.direccion.numero : ''}"/>
+    </div>
+
+    <div class="mb-3">
+      <label for="cp" class="form-label">Código Postal:</label>
+      <input type="text" id="cp" name="direccion.cp" class="form-control"
+             th:value="${Usuario.direccion != null ? Usuario.direccion.cp : ''}"/>
+    </div>
+
+    <div class="mb-3">
+      <label for="colonia" class="form-label">Colonia:</label>
+      <input type="text" id="colonia" name="direccion.colonia" class="form-control"
+             th:value="${Usuario.direccion != null ? Usuario.direccion.colonia : ''}"/>
+    </div>
+
+    <div class="mb-3">
+      <label for="ciudad" class="form-label">Ciudad:</label>
+      <input type="text" id="ciudad" name="direccion.ciudad" class="form-control"
+             th:value="${Usuario.direccion != null ? Usuario.direccion.ciudad : ''}"/>
     </div>
 
     <div>
@@ -137,6 +138,21 @@
   </form>
 </div>
 
+<script>
+    function validatePasswords() {
+        var password = document.getElementById('password').value;
+        var confirmPassword = document.getElementById('confirmPassword').value;
+        var confirmPasswordError = document.getElementById('confirmPasswordError');
+
+        if (password !== confirmPassword) {
+            confirmPasswordError.textContent = 'Las contraseñas no coinciden';
+            return false;
+        } else {
+            confirmPasswordError.textContent = '';
+            return true;
+        }
+    }
+</script>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"
         integrity="sha256-oP6HI/tTQ7Mlhy8zmN8eAqfPLfu2KOz9q+L2+8A+YFc=" crossorigin="anonymous"></script>

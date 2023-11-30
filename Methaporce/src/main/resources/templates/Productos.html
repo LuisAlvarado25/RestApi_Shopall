@@ -8,17 +8,44 @@
     body {
         padding-top: 70px; /* Ajusta según el tamaño de tu barra de navegación */
     }
+     .profile-image {
+        width: 30px; /* Ajusta el tamaño según tu preferencia */
+        height: 30px; /* Ajusta el tamaño según tu preferencia */
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 10px;
+    }
 </style>
 
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="#">ShopAll</a>
+        <a class="navbar-brand" href="#">ACSHOP</a>
         <div class="collapse navbar-collapse" id="navbarNav">
+
             <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/Productos">Todos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ProductosCategoria?categoria=Electronica">Electrónica</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ProductosCategoria?categoria=Moda">Moda</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ProductosCategoria?categoria=Hogar">Hogar</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ProductosCategoria?categoria=Deportes">Deportes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ProductosCategoria?categoria=Belleza">Belleza</a>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="cuentaDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img class="profile-image rounded-circle" src="/img/login-icon.svg" >
                         Hola, <span th:text="${nombreUsuario}"></span>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="cuentaDropdown">
@@ -28,7 +55,7 @@
                         <a th:if="${esVendedor}" class="dropdown-item" href="/GestionarProductos">Mis Productos</a>
                         <a class="dropdown-item" href="/carrito">Carrito</a>
                         <a class="dropdown-item" href="/Transacciones">Transacciones</a>
-                        <a class="dropdown-item text-danger" href="/logout">Cerrar sesion</a>
+                        <a class="dropdown-item text-danger" href="/logout">Cerrar sesión</a>
                     </div>
                 </li>
             </ul>
@@ -38,13 +65,19 @@
 
 
 <div class="container mt-4">
-     <h2 class="text-center">SHOPALL </h2>
-
-      <div th:each="producto : ${productos}" class="card mb-4">
+     <h2 class="text-center">ACSHOP</h2>
+    <form th:action="@{/buscar-productos}" method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" class="form-control" name="q" placeholder="Buscar productos" />
+            <button class="btn btn-outline-secondary" type="submit">Buscar</button>
+        </div>
+    </form>
+      <div th:each="producto : ${productos}" class="card mb-4 card shadow">
         <div class="card-body">
             <h3 class="card-title" th:text="${producto.nombre}"></h3>
             <div class="d-flex justify-content-between">
                 <p class="text-lg" th:text="${producto.descripcion}"></p>
+                <p class="text-lg" th:text="${producto.categoria}"></p>
                 <p class="text-danger text-lg" th:text="${'Precio: $' + producto.precio}"></p>
             </div>
         </div>

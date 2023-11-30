@@ -29,7 +29,7 @@ public class Producto {
     private double precio;
 
     @Column(name="Categoria")
-    private String Categoria;
+    private String categoria;
 
     @Column(name="Cantidad")
     private int cantidad;
@@ -46,6 +46,9 @@ public class Producto {
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ListaCarrito> listaCarritos;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetalleTransaccion> detallesTransaccion;
 
     public void agregarComentario(Comentario comentario) {
         if (comentarios == null) {
